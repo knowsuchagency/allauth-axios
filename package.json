@@ -1,0 +1,14 @@
+{
+  "name": "allauth-axios",
+  "version": "0.1.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Stephan Fitzpatrick",
+  "license": "ISC",
+  "description": "django-allauth axios client",
+  "dependencies": {
+    "axios": "^1.7.2"
+  }
+}
