@@ -643,4 +643,4 @@ class AllauthClient {
   }
 }
 
-export default AllauthClient;
+export AllauthClient;
