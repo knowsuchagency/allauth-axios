@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useEffect, useState, ReactElement } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  ReactElement,
+} from "react";
 import AllauthClient, { User } from "./allauth.ts";
 
 interface AuthContextData {
@@ -17,15 +23,17 @@ interface AuthContextData {
   logout: () => Promise<void>;
 }
 
-const AuthContext: React.Context<AuthContextData | undefined> = createContext<AuthContextData | undefined>(undefined);
+const AuthContext: React.Context<AuthContextData | undefined> = createContext<
+  AuthContextData | undefined
+>(undefined);
 
-export const useAuth = (): AuthContextData => {
+export function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
   if (!context) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
-};
+}
 
 interface AuthProviderProps {
   children: React.ReactNode;
