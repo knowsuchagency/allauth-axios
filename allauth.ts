@@ -169,7 +169,7 @@ interface Session {
   last_seen_at?: number;
 }
 
-class AllauthClient {
+export class AllauthClient {
   private axiosInstance: AxiosInstance;
 
   constructor(private client: Client, private apiBaseUrl: string) {
@@ -642,5 +642,3 @@ class AllauthClient {
     return response.data.data;
   }
 }
-
-export AllauthClient;
