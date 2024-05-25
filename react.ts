@@ -5,7 +5,7 @@ import React, {
   useState,
   ReactElement,
 } from "react";
-import AllauthClient, { User } from "./allauth.ts";
+import { AllauthClient, User } from "./allauth.ts";
 
 interface AuthContextData {
   user: User | null;
