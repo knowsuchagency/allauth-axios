@@ -172,7 +172,7 @@ interface Session {
 export class AllauthClient {
   private axiosInstance: AxiosInstance;
 
-  constructor(private client: Client, private apiBaseUrl: string) {
+  constructor(private client: Client, apiBaseUrl: string) {
     this.axiosInstance = axios.create({
       baseURL: `${apiBaseUrl}/_allauth/${client}/v1`,
     });
