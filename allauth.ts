@@ -69,7 +69,7 @@ interface AuthenticatedResponse {
   };
 }
 
-interface User {
+export interface User {
   id: number | string;
   display: string;
   has_usable_password: boolean;
