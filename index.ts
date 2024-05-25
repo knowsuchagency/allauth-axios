@@ -214,20 +214,43 @@ class AllauthClient {
     return response.data;
   }
 
-  async verifyEmail(data: { key: string }): Promise<AuthenticatedResponse> {
+  async verifyEmail(
+    data: { key: string },
+    sessionToken?: string
+  ): Promise<AuthenticatedResponse> {
+    let config = {
+      headers: {},
+    };
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      config.headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<AuthenticatedResponse> =
-      await this.axiosInstance.post("/auth/email/verify", data);
+      await this.axiosInstance.post(`/auth/email/verify`, data, config);
     return response.data;
   }
 
   async reauthenticate(
     data: { password: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<AuthenticatedResponse> {
+    let config = {
+      headers: {},
+    };
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      config.headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<AuthenticatedResponse> =
-      await this.axiosInstance.post("/auth/reauthenticate", data, {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.post("/auth/reauthenticate", data, config);
     return response.data;
   }
 
@@ -261,9 +284,14 @@ class AllauthClient {
     sessionToken?: string
   ): Promise<AuthenticatedResponse> {
     const headers: Record<string, string> = {};
-    if (sessionToken) {
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
       headers["X-Session-Token"] = sessionToken;
     }
+
     const response: AxiosResponse<AuthenticatedResponse> =
       await this.axiosInstance.post("/auth/provider/token", data, { headers });
     return response.data;
@@ -279,21 +307,39 @@ class AllauthClient {
 
   async mfaAuthenticate(
     data: { code: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<AuthenticatedResponse> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<AuthenticatedResponse> =
       await this.axiosInstance.post("/auth/2fa/authenticate", data, {
-        headers: { "X-Session-Token": sessionToken },
+        headers,
       });
     return response.data;
   }
 
   async mfaReauthenticate(
-    sessionToken: string
+    sessionToken?: string
   ): Promise<AuthenticatedResponse> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<AuthenticatedResponse> =
       await this.axiosInstance.post("/auth/2fa/reauthenticate", null, {
-        headers: { "X-Session-Token": sessionToken },
+        headers,
       });
     return response.data;
   }
@@ -310,136 +356,231 @@ class AllauthClient {
     return response.data;
   }
 
-  async getProviderAccounts(sessionToken: string): Promise<ProviderAccount[]> {
+  async getProviderAccounts(sessionToken?: string): Promise<ProviderAccount[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: ProviderAccount[] }> =
-      await this.axiosInstance.get("/account/providers", {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.get("/account/providers", { headers });
     return response.data.data;
   }
 
   async disconnectProviderAccount(
     data: { provider: string; account: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<ProviderAccount[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: ProviderAccount[] }> =
-      await this.axiosInstance.delete("/account/providers", {
-        headers: { "X-Session-Token": sessionToken },
-        data,
-      });
+      await this.axiosInstance.delete("/account/providers", { headers, data });
     return response.data.data;
   }
 
-  async getEmailAddresses(sessionToken: string): Promise<EmailAddress[]> {
+  async getEmailAddresses(sessionToken?: string): Promise<EmailAddress[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: EmailAddress[] }> =
-      await this.axiosInstance.get("/account/email", {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.get("/account/email", { headers });
     return response.data.data;
   }
 
   async addEmailAddress(
     data: { email: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<EmailAddress[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: EmailAddress[] }> =
-      await this.axiosInstance.post("/account/email", data, {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.post("/account/email", data, { headers });
     return response.data.data;
   }
 
   async requestEmailVerification(
     data: { email: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<void> {
-    await this.axiosInstance.put("/account/email", data, {
-      headers: { "X-Session-Token": sessionToken },
-    });
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
+    await this.axiosInstance.put("/account/email", data, { headers });
   }
 
   async changePrimaryEmailAddress(
     data: { email: string; primary: true },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<EmailAddress[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: EmailAddress[] }> =
-      await this.axiosInstance.patch("/account/email", data, {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.patch("/account/email", data, { headers });
     return response.data.data;
   }
 
   async removeEmailAddress(
     data: { email: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<EmailAddress[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: EmailAddress[] }> =
-      await this.axiosInstance.delete("/account/email", {
-        headers: { "X-Session-Token": sessionToken },
-        data,
-      });
+      await this.axiosInstance.delete("/account/email", { headers, data });
     return response.data.data;
   }
 
   async getAuthenticators(
-    sessionToken: string
+    sessionToken?: string
   ): Promise<(TOTPAuthenticator | RecoveryCodesAuthenticator)[]> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{
       status: number;
       data: (TOTPAuthenticator | RecoveryCodesAuthenticator)[];
-    }> = await this.axiosInstance.get("/account/authenticators", {
-      headers: { "X-Session-Token": sessionToken },
-    });
+    }> = await this.axiosInstance.get("/account/authenticators", { headers });
     return response.data.data;
   }
 
-  async getTOTPAuthenticator(sessionToken: string): Promise<TOTPAuthenticator> {
+  async getTOTPAuthenticator(
+    sessionToken?: string
+  ): Promise<TOTPAuthenticator> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: TOTPAuthenticator }> =
-      await this.axiosInstance.get("/account/authenticators/totp", {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.get("/account/authenticators/totp", { headers });
     return response.data.data;
   }
 
   async activateTOTP(
     data: { code: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<TOTPAuthenticator> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{ status: number; data: TOTPAuthenticator }> =
       await this.axiosInstance.post("/account/authenticators/totp", data, {
-        headers: { "X-Session-Token": sessionToken },
+        headers,
       });
     return response.data.data;
   }
 
-  async deactivateTOTP(sessionToken: string): Promise<void> {
+  async deactivateTOTP(sessionToken?: string): Promise<void> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     await this.axiosInstance.delete("/account/authenticators/totp", {
-      headers: { "X-Session-Token": sessionToken },
+      headers,
     });
   }
 
   async getRecoveryCodes(
-    sessionToken: string
+    sessionToken?: string
   ): Promise<SensitiveRecoveryCodesAuthenticator> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<{
       status: number;
       data: SensitiveRecoveryCodesAuthenticator;
     }> = await this.axiosInstance.get(
       "/account/authenticators/recovery_codes",
-      {
-        headers: { "X-Session-Token": sessionToken },
-      }
+      { headers }
     );
     return response.data.data;
   }
 
-  async regenerateRecoveryCodes(sessionToken: string): Promise<void> {
+  async regenerateRecoveryCodes(sessionToken?: string): Promise<void> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     await this.axiosInstance.post(
       "/account/authenticators/recovery_codes",
       null,
-      {
-        headers: { "X-Session-Token": sessionToken },
-      }
+      { headers }
     );
   }
 
@@ -456,20 +597,36 @@ class AllauthClient {
     return response.data;
   }
 
-  async logout(sessionToken: string): Promise<AuthenticationResponse> {
+  async logout(sessionToken?: string): Promise<AuthenticationResponse> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     const response: AxiosResponse<AuthenticationResponse> =
-      await this.axiosInstance.delete("/auth/session", {
-        headers: { "X-Session-Token": sessionToken },
-      });
+      await this.axiosInstance.delete("/auth/session", { headers });
     return response.data;
   }
 
   async changePassword(
     data: { current_password?: string; new_password: string },
-    sessionToken: string
+    sessionToken?: string
   ): Promise<void> {
+    const headers: Record<string, string> = {};
+
+    if (this.client === "app") {
+      if (!sessionToken) {
+        throw new Error("Session token is required for app client");
+      }
+      headers["X-Session-Token"] = sessionToken;
+    }
+
     await this.axiosInstance.post("/account/password/change", data, {
-      headers: { "X-Session-Token": sessionToken },
+      headers,
     });
   }
 
